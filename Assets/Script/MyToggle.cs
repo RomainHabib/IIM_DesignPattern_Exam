@@ -5,7 +5,7 @@ using UnityEngine.Events;
 
 public class MyToggle : MonoBehaviour, ITouchable
 {
-    // Je veux ouvrir un évènement pour les designers pour qu'ils puissent set la couleur du sprite eux même
+    // Je veux ouvrir un ï¿½vï¿½nement pour les designers pour qu'ils puissent set la couleur du sprite eux mï¿½me
     [SerializeField] UnityEvent _onToggleOn;
     [SerializeField] UnityEvent _onToggleOff;
 
@@ -14,5 +14,8 @@ public class MyToggle : MonoBehaviour, ITouchable
     public void Touch(int power)
     {
         IsActive = !IsActive;
+        
+        UnityEvent e = IsActive ? _onToggleOn : _onToggleOff;
+        e.Invoke();
     }
 }

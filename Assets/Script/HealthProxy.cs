@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class HealthProxy : MonoBehaviour, IHealth
+public class HealthProxy : MonoBehaviour, IHealth, ITouchable
 {
     [SerializeField] Health _health;
 
@@ -13,6 +13,11 @@ public class HealthProxy : MonoBehaviour, IHealth
     public int MaxHealth => _health.MaxHealth;
 
     public bool IsDead => _health.IsDead;
+
+    public bool CanTakeDamage
+    {
+        get => _health.CanTakeDamage;
+    }
 
     public event UnityAction OnSpawn
     {
@@ -30,9 +35,20 @@ public class HealthProxy : MonoBehaviour, IHealth
         remove => _health.OnDeath -= value;
     }
 
+    public event UnityAction OnShield
+    {
+        add => _health.OnShield += value;
+        remove => _health.OnShield -= value;
+    }
+
+    public event UnityAction OnHeal
+    {
+        add => _health.OnShield += value;
+        remove => _health.OnShield -= value;
+    }
+
     public void TakeDamage(int amount) => _health.TakeDamage(amount);
-
-    
-
+    public void ApplyShield() => _health.ApplyShield();
+    public void Touch(int power) => _health.TakeDamage(power);
 
 }

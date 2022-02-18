@@ -12,15 +12,18 @@ public class Health : MonoBehaviour, IHealth
     [SerializeField] int _maxHealth;
     [SerializeField] UnityEvent _onDeath;
 
-    // Propriétés
+    // Propriï¿½tï¿½s
     public int CurrentHealth { get; private set; }
     public int MaxHealth => _maxHealth;
     public bool IsDead => CurrentHealth <= 0;
+    public bool CanTakeDamage { get; set; }
 
     // Events
     public event UnityAction OnSpawn;
     public event UnityAction<int> OnDamage;
     public event UnityAction OnDeath { add => _onDeath.AddListener(value); remove => _onDeath.RemoveListener(value); }
+    public event UnityAction OnShield;
+    public event UnityAction OnHeal;
 
     // Methods
     void Awake() => Init();
@@ -28,11 +31,14 @@ public class Health : MonoBehaviour, IHealth
     void Init()
     {
         CurrentHealth = _startHealth;
+        CanTakeDamage = true;
         OnSpawn?.Invoke();
     }
 
     public void TakeDamage(int amount)
     {
+        if (!CanTakeDamage) return;
+        
         if (amount < 0) throw new ArgumentException($"Argument amount {nameof(amount)} is negativ");
 
         var tmp = CurrentHealth;
@@ -44,7 +50,26 @@ public class Health : MonoBehaviour, IHealth
         {
             _onDeath?.Invoke();
         }
+    }
 
+    public void Heal(int amount)
+    {
+        OnHeal?.Invoke();
+        
+        if (amount > _maxHealth)
+        {
+            CurrentHealth = _maxHealth;
+        }
+        else
+        {
+            CurrentHealth += amount;
+        }
+    }
+
+    public void ApplyShield()
+    {
+        CanTakeDamage = !CanTakeDamage;
+        OnShield?.Invoke();
     }
 
     [Button("test")]
